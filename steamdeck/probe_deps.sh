@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-BUILD=/mnt/d/Temp/decomp/banjotooie-recomp/out/build/linux-amd64-debug
-SO=/mnt/d/Temp/decomp/rexglue-sdk/out/linux-amd64
+BUILD=/mnt/d/Temp/tooie/banjotooie-recomp/out/build/linux-amd64-debug
+SO=/mnt/d/Temp/tooie/rexglue-sdk/out/linux-amd64
 echo "=== game binary + runtime .so present ==="
 ls -la "$BUILD/banjotooie" "$SO"/*.so 2>/dev/null
 echo

@@ -2,11 +2,11 @@
 export DISPLAY=:0
 TEST="$HOME/bt_final_test"
 rm -rf "$TEST"; mkdir -p "$TEST/BanjoTooie-Data"
-cp /mnt/d/Temp/decomp/launcher/dist/Banjo-Tooie "$TEST/"; chmod +x "$TEST/Banjo-Tooie"
+cp /mnt/d/Temp/tooie/launcher/dist/Banjo-Tooie "$TEST/"; chmod +x "$TEST/Banjo-Tooie"
 cat > "$TEST/BanjoTooie-Data/launcher_config.xml" <<'EOF'
 <?xml version='1.0' encoding='utf-8'?>
 <launcher>
-  <package_path>/mnt/d/Temp/decomp/ABB9CAB336175357D09F2D922735D23C62F90DDD58</package_path>
+  <package_path>/mnt/d/Temp/tooie/ABB9CAB336175357D09F2D922735D23C62F90DDD58</package_path>
   <auto_play>false</auto_play>
 </launcher>
 EOF
@@ -22,4 +22,4 @@ cat /tmp/bt_final.out | head
 echo "=== capture window ==="
 WID=$(xwininfo -root -tree 2>/dev/null | grep "Banjo-Tooie PC Launcher" | head -1 | awk '{print $1}')
 echo "wid: ${WID:-none}"
-[ -n "$WID" ] && import -window "$WID" /mnt/d/Temp/decomp/steamdeck/launcher_final.png 2>/dev/null && echo captured
+[ -n "$WID" ] && import -window "$WID" /mnt/d/Temp/tooie/steamdeck/launcher_final.png 2>/dev/null && echo captured

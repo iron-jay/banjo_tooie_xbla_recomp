@@ -1,6 +1,6 @@
 # Next session: fix the Steam Deck Gaming Mode launcher → black screen
 
-Paste the block below to start the next session. Read `D:\Temp\decomp\CLAUDE.md` first
+Paste the block below to start the next session. Read `D:\Temp\tooie\CLAUDE.md` first
 (esp. the "Known issue: Gaming Mode launcher → game BLACK SCREEN" subsection under the
 Steam Deck section).
 
@@ -17,7 +17,7 @@ process runs, but its window/audio never becomes the foreground gamescope surfac
 (b) in **Desktop Mode**. Make the normal launcher→Play flow work in Gaming Mode too.
 
 ### Where the code is
-`D:\Temp\decomp\launcher\launcher.py`:
+`D:\Temp\tooie\launcher\launcher.py`:
 - `_launch_game()` — sets env (`REX_MNK_MODE`, `REX_KEYBIND_START`, `REX_USER_DATA_ROOT`,
   `LD_LIBRARY_PATH`, RenderDoc-layer suppression) and does `subprocess.Popen([exe, "--game_data_root",
   GAME_DATA_DIR], cwd=exe_dir, env=env)`, returns True.
@@ -52,8 +52,8 @@ so the game inherits the Steam-tracked process slot/PID. Notes:
 This is a `launcher.py`-only change — **no game rebuild needed**. After editing, repackage the
 launchers (SEQUENTIALLY, never concurrently — they share `_payload/`/`build/`/`dist/`):
 - Linux (the one the Deck needs): `wsl -d Ubuntu-24.04 -u root -- bash -c "sed 's/\r$//'
-  /mnt/d/Temp/decomp/steamdeck/build_launcher_2404.sh | bash"` → `launcher/dist/Banjo-Tooie`.
-- Windows: `cd D:\Temp\decomp\launcher; python build_release.py`.
+  /mnt/d/Temp/tooie/steamdeck/build_launcher_2404.sh | bash"` → `launcher/dist/Banjo-Tooie`.
+- Windows: `cd D:\Temp\tooie\launcher; python build_release.py`.
 
 ### Testing
 **Cannot be reproduced in WSL — there is no gamescope there.** The user must test each candidate build

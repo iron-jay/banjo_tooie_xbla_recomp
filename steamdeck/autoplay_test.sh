@@ -3,12 +3,12 @@
 export DISPLAY=:0
 TEST="$HOME/bt_autoplay_test"
 rm -rf "$TEST"; mkdir -p "$TEST/BanjoTooie-Data/game_data"
-cp /mnt/d/Temp/decomp/launcher/dist/Banjo-Tooie "$TEST/"; chmod +x "$TEST/Banjo-Tooie"
+cp /mnt/d/Temp/tooie/launcher/dist/Banjo-Tooie "$TEST/"; chmod +x "$TEST/Banjo-Tooie"
 # auto_play ON, and pretend extraction is already done (marker present).
 cat > "$TEST/BanjoTooie-Data/launcher_config.xml" <<'EOF'
 <?xml version='1.0' encoding='utf-8'?>
 <launcher>
-  <package_path>/mnt/d/Temp/decomp/ABB9CAB336175357D09F2D922735D23C62F90DDD58</package_path>
+  <package_path>/mnt/d/Temp/tooie/ABB9CAB336175357D09F2D922735D23C62F90DDD58</package_path>
   <auto_play>true</auto_play>
 </launcher>
 EOF

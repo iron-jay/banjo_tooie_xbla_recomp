@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-REL=/mnt/d/Temp/decomp/banjotooie-recomp/out/build/linux-amd64-release/banjotooie
-SO=/mnt/d/Temp/decomp/rexglue-sdk/out/linux-amd64/librexruntime.so
-TR=/mnt/d/Temp/decomp/rexglue-sdk/out/linux-amd64/libTracyClient.so
+REL=/mnt/d/Temp/tooie/banjotooie-recomp/out/build/linux-amd64-release/banjotooie
+SO=/mnt/d/Temp/tooie/rexglue-sdk/out/linux-amd64/librexruntime.so
+TR=/mnt/d/Temp/tooie/rexglue-sdk/out/linux-amd64/libTracyClient.so
 command -v objdump >/dev/null || { echo "installing binutils"; apt-get install -y binutils >/dev/null 2>&1; }
 for f in "$REL" "$SO" "$TR"; do
   echo "=== $(basename "$f") ==="

@@ -9,8 +9,8 @@ sleep 6
 WID=$(xwininfo -root -tree 2>/dev/null | grep "Banjo-Tooie PC Launcher" | head -1 | awk '{print $1}')
 echo "window id: $WID"
 if [ -n "$WID" ]; then
-  import -window "$WID" /mnt/d/Temp/decomp/steamdeck/launcher_linux.png && echo "captured"
-  ls -la /mnt/d/Temp/decomp/steamdeck/launcher_linux.png
+  import -window "$WID" /mnt/d/Temp/tooie/steamdeck/launcher_linux.png && echo "captured"
+  ls -la /mnt/d/Temp/tooie/steamdeck/launcher_linux.png
 else
   echo "no launcher window found"
 fi

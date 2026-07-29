@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Install the Linux/Vulkan build toolchain + SDL deps for the Banjo-Tooie
 # native-Linux (Steam Deck) bring-up. Run as root inside WSL Ubuntu:
-#   wsl -d Ubuntu -u root -- bash /mnt/d/Temp/decomp/steamdeck/install_deps.sh
+#   wsl -d Ubuntu -u root -- bash /mnt/d/Temp/tooie/steamdeck/install_deps.sh
 set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
 

@@ -3,11 +3,11 @@
 set -e
 TEST="$HOME/bt_linux_test"
 rm -rf "$TEST"; mkdir -p "$TEST"
-cp /mnt/d/Temp/decomp/launcher/dist/Banjo-Tooie "$TEST/"
+cp /mnt/d/Temp/tooie/launcher/dist/Banjo-Tooie "$TEST/"
 chmod +x "$TEST/Banjo-Tooie"
 # Pre-seed the package path (valid JSON, forward slashes) so no file dialog needed.
 cat > "$TEST/launcher_config.json" <<'EOF'
-{ "package_path": "/mnt/d/Temp/decomp/ABB9CAB336175357D09F2D922735D23C62F90DDD58" }
+{ "package_path": "/mnt/d/Temp/tooie/ABB9CAB336175357D09F2D922735D23C62F90DDD58" }
 EOF
 export DISPLAY=:0
 cd "$TEST"

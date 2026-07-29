@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 export DISPLAY=:0
-BUILD=/mnt/d/Temp/decomp/banjotooie-recomp/out/build/linux-amd64-release
-export LD_LIBRARY_PATH=/mnt/d/Temp/decomp/rexglue-sdk/out/linux-amd64
+BUILD=/mnt/d/Temp/tooie/banjotooie-recomp/out/build/linux-amd64-release
+export LD_LIBRARY_PATH=/mnt/d/Temp/tooie/rexglue-sdk/out/linux-amd64
 export REX_USER_DATA_ROOT="$HOME/bt_verify"; mkdir -p "$REX_USER_DATA_ROOT"
 cd "$BUILD"
-setsid ./banjotooie --game_data_root /mnt/d/Temp/decomp/xbla/files >/tmp/gv.out 2>&1 </dev/null &
+setsid ./banjotooie --game_data_root /mnt/d/Temp/tooie/xbla/files >/tmp/gv.out 2>&1 </dev/null &
 GP=$!
 sleep 14
 echo "=== game window (title should be 'Banjo-Tooie') ==="

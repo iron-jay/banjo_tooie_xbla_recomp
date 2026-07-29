@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-BIN=/mnt/d/Temp/decomp/banjotooie-recomp/out/build/linux-amd64-debug/banjotooie
-SO=/mnt/d/Temp/decomp/rexglue-sdk/out/linux-amd64/librexruntimed.so
+BIN=/mnt/d/Temp/tooie/banjotooie-recomp/out/build/linux-amd64-debug/banjotooie
+SO=/mnt/d/Temp/tooie/rexglue-sdk/out/linux-amd64/librexruntimed.so
 echo "=== highest GLIBC_ symbol version required by banjotooie ==="
 objdump -T "$BIN" 2>/dev/null | grep -oE 'GLIBC_[0-9]+\.[0-9]+' | sort -uV | tail -5
 echo "=== highest GLIBCXX_ (libstdc++) required by banjotooie ==="
