@@ -1,0 +1,40 @@
+# === Copyrighted game material — NEVER commit these, public or private repo ===
+# The original XBLA package, the decrypted executable, and every extraction of
+# game data (textures, audio, tables, strings) derived from it. Players must
+# supply their own legally-owned copy; see launcher/README.md.
+/ABB9CAB336175357D09F2D922735D23C62F90DDD58
+/Banjo-Tooie (USA).z64
+/xbla/
+/launcher/game_data/
+/clean-to-test/
+
+# === Build output — regenerate via CLAUDE.md "Build" ===
+/rexglue-sdk/out/
+/banjotooie-recomp/out/
+
+# banjotooie-recomp/generated/ (recompiled C++ derived from the game's binary)
+# is regenerable in ~70s via `rexglue codegen` against your own copy of the
+# XEX (see CLAUDE.md "Re-run codegen") — treated as a build artifact, not source.
+/banjotooie-recomp/generated/
+
+# === Launcher: generated/local, not source ===
+/launcher/saves/
+/launcher/build/
+/launcher/dist/
+/launcher/__pycache__/
+/launcher/Banjo-Tooie.spec
+/launcher/launcher_config.json
+/launcher/_payload/
+
+# === Claude-specific session/assistant artifacts — not project documentation ===
+/.claude/
+/CLAUDE.md
+/HANDOFF-to-original-machine.md
+/note.txt
+
+# === Misc build/tooling noise ===
+__pycache__/
+*.pyc
+.cache/
+CMakeUserPresets.json
+*.log

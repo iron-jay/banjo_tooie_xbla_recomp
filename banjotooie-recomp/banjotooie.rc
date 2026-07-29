@@ -1,0 +1,5 @@
+// Windows resource script for the Banjo-Tooie port executable.
+// MAINICON is what window_win.cpp loads for the window class icon
+// (LoadIconW(hinstance, L"MAINICON")), and it is also the icon Windows
+// Explorer shows for the .exe file itself.
+MAINICON ICON "banjotooie.ico"

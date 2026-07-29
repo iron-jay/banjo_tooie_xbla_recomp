@@ -1,0 +1,76 @@
+# Manual codegen overrides for Banjo-Tooie (XBLA).
+
+# CRT setjmp/longjmp (found via the D3DX shader-compiler E_FAIL trail, crash #1).
+# The recompiled _setjmp (0x8259FD90) was truncated to its 5-instruction hook stub
+# (hook at 0x826CCC58 is null at runtime), so it fell off the end returning garbage
+# nonzero r3 -> D3DX compiler took its longjmp error path on every compile -> E_FAIL.
+# These make codegen replace call sites with host ppc_setjmp/ppc_longjmp.
+setjmp_address = 0x8259FD90
+longjmp_address = 0x8259FA70
+# These 4 tail-call ('b') targets were not auto-detected as function starts
+# by the analyzer (UnresolvedCall: "target not in any function"). Declaring
+# them as function entry points lets the scanner discover their extents.
+[functions]
+0x8223F200 = {}
+0x8223AC28 = {}
+0x82523A78 = {}
+0x822E8C00 = {}
+# Indirect-call target (crash #2): comparator reached only via function pointer
+# from the D3DX shader compiler; scanner missed it (gap 0x82415008..0x824151E4).
+0x82415170 = {}
+# Batch: unregistered code pointers found by scanning .rdata/.data for function
+# pointers into the code range (vtable entries, adjustor thunks, callbacks) that
+# the scanner missed. Each verified to disassemble as a plausible function entry.
+# EH-table continuation targets (referenced only from 0x8207FExx-0x820803xx) were
+# deliberately EXCLUDED (mid-function labels, not entries). Import stubs at
+# 0x825F36xx-0x825F38xx also excluded (handled by import dispatch).
+0x820B0C04 = {}
+0x820CBA10 = {}
+0x820F8010 = {}
+0x82109DF0 = {}
+0x8210E538 = {}
+0x82115BC0 = {}
+0x82137588 = {}
+0x82140030 = {}
+0x82185530 = {}
+0x82204080 = {}
+0x82348C40 = {}
+0x82348EA8 = {}
+0x82348ED0 = {}
+0x82348EF8 = {}
+0x82348F20 = {}
+0x82349350 = {}
+0x8239F008 = {}
+0x8249AB80 = {}
+0x824E3C58 = {}
+0x824F6EB8 = {}
+0x824FA6B0 = {}
+0x824FB4A8 = {}
+0x824FE4D8 = {}
+0x824FE4E8 = {}
+0x824FE4F0 = {}
+0x824FE4F8 = {}
+0x824FE500 = {}
+0x82502710 = {}
+0x82502718 = {}
+0x82502720 = {}
+0x82502728 = {}
+0x82502730 = {}
+0x82504E98 = {}
+0x82504EA0 = {}
+0x82504EA8 = {}
+0x82504EB0 = {}
+0x82504EB8 = {}
+0x82515700 = {}
+0x82515F10 = {}
+0x825270F0 = {}
+0x8254A6F0 = {}
+# Indirect-call target (crash entering Humba Wumba's wigwam, Mayahem Temple,
+# 2026-07-05): leaf function at 0x82280AF8 (no prologue, ends in blr at
+# 0x82280B98) that scales 3 bytes at +0xc/+0xd/+0xe of 16-byte records by a
+# float — looks like per-vertex RGB lighting/color scaling. Reached only via a
+# runtime-computed function pointer (the address appears nowhere in .rdata/.data
+# nor in the game data files, so the static pointer scan couldn't find it).
+# Verified NOT an EH-continuation target; previous function sub_82280A38
+# genuinely ends at 0x82280AF4 (b back to its epilogue at 0x82280AC4).
+0x82280AF8 = {}
