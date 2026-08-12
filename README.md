@@ -70,3 +70,9 @@ the launcher automates. For the Linux/Steam Deck cross-build path, see the scrip
 Built on [ReXGlue](https://github.com/rexglue/rexglue-sdk) by Tom Clay, itself derived from the
 [Xenia](https://xenia.jp) project. Banjo-Tooie is the property of Microsoft/Rare; nothing in this
 repository transfers any rights to their work.
+
+The port was developed by [@iron-jay](https://github.com/iron-jay) with
+[Claude](https://claude.com/claude-code) (Anthropic) as a pair-programming collaborator across the
+project's sessions — crash triage on the recompiled guest code, the kernel/input/audio bring-up fixes
+carried in the `rexglue-sdk` fork, the launcher and its STFS extractor, and the Linux/Steam Deck
+build path. Hardware verification, testing, and direction throughout were the author's.
