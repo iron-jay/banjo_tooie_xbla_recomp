@@ -10,6 +10,7 @@ Usage: python launcher.py   (or run the packaged launcher.exe)
 """
 from __future__ import annotations
 
+import hashlib
 import os
 import shutil
 import subprocess
@@ -19,7 +20,7 @@ import tkinter as tk
 import xml.etree.ElementTree as ET
 from tkinter import filedialog, messagebox
 
-from stfs_extract import StfsPackage
+from stfs_extract import RAWFILES_NAMES, StfsPackage
 
 
 def _app_dir() -> str:
@@ -56,6 +57,14 @@ GAME_DIR = os.path.join(DATA_DIR, "game")         # game binary + its libs live 
 GAME_DATA_DIR = os.path.join(DATA_DIR, "game_data")
 SAVES_DIR = os.path.join(DATA_DIR, "saves")
 EXTRACT_MARKER = os.path.join(GAME_DATA_DIR, ".extracted_ok")
+# SHA-256 of xbla/files/default.xex from the exact XBLA build this port was
+# recompiled against. banjotooie-recomp/generated/ + overrides.toml (the
+# recompiled function table and manual fixups) are only valid for this one
+# executable - a different region/revision could lay out code completely
+# differently, which the precompiled functions would silently mismatch rather
+# than fail loudly (see the "hash check" conversation in CLAUDE.md history).
+# Checked right after extraction, before the data is trusted.
+TESTED_XEX_SHA256 = "4b512ae9f4412c246fe40a8b07b9d2932e1d18259dacb830991d7dbf827367a5"
 # Game binaries bundled inside a frozen build (empty when running from source).
 PAYLOAD_DIR = os.path.join(_resource_dir(), "payload")
 # App/window icon (bundled into the frozen build; also present in source).
@@ -186,6 +195,33 @@ def find_game_exe() -> str | None:
         if os.path.exists(path):
             return path
     return None
+
+
+def _hash_file(path: str) -> str:
+    """SHA-256 of a file's contents, streamed (the .xex is only a few MB, but
+    no reason to load it all into memory at once)."""
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _game_data_present() -> bool:
+    """True if game_data/ actually still has what the game needs to run right
+    now - not just whether the .extracted_ok marker exists. The marker lives
+    inside game_data/ itself, so it only reflects reality at the moment
+    extraction finished; if a player deletes or moves files under game_data/
+    afterward (freeing space, troubleshooting, a half-finished manual cleanup,
+    etc.) without touching the marker, a marker-only check would still claim
+    "ready to play" right up until the game itself fails partway through
+    boot. Check for the specific files the game actually opens instead."""
+    if not os.path.exists(EXTRACT_MARKER):
+        return False
+    if not os.path.isfile(os.path.join(GAME_DATA_DIR, "default.xex")):
+        return False
+    rawfiles_dir = os.path.join(GAME_DATA_DIR, "RAWFiles")
+    return all(os.path.isfile(os.path.join(rawfiles_dir, name)) for name in RAWFILES_NAMES)
 
 
 def _round_rect_points(x1, y1, x2, y2, r):
@@ -408,7 +444,15 @@ class LauncherApp:
         else:
             self.exe_status.config(text=f"Using:  {exe}", fg=MUTED)
 
-        extracted = os.path.exists(EXTRACT_MARKER)
+        extracted = _game_data_present()
+        if os.path.exists(EXTRACT_MARKER) and not extracted:
+            # The marker survived but the actual game data didn't (deleted or
+            # moved after extracting) - clear the stale marker so state stays
+            # honest rather than re-showing "ready to play" forever.
+            try:
+                os.remove(EXTRACT_MARKER)
+            except OSError:
+                pass
         has_package = bool(self.package_path.get()) and os.path.exists(self.package_path.get())
 
         self.extract_btn.set_enabled(has_package)
@@ -470,8 +514,30 @@ class LauncherApp:
                 self._set_progress(pct)
 
             extracted = pkg.extract_all(GAME_DATA_DIR, progress=progress)
+
+            self._set_status("Verifying game version...")
+            xex_path = os.path.join(GAME_DATA_DIR, "default.xex")
+            if not os.path.isfile(xex_path):
+                raise RuntimeError(
+                    "default.xex wasn't found in the extracted package - is this "
+                    "really a Banjo-Tooie XBLA package?")
+            actual_hash = _hash_file(xex_path)
+            if actual_hash != TESTED_XEX_SHA256:
+                # Don't leave a half-verified game_data/ sitting around looking
+                # like it's ready to play - remove it so the next attempt (or a
+                # confused bug report) starts from a clean, honest state.
+                shutil.rmtree(GAME_DATA_DIR, ignore_errors=True)
+                raise RuntimeError(
+                    "This package's default.xex doesn't match the exact XBLA "
+                    "version this launcher was built and tested against "
+                    f"(got {actual_hash[:12]}..., expected "
+                    f"{TESTED_XEX_SHA256[:12]}...). It may be a different "
+                    "region/revision or a corrupted file - the game likely "
+                    "wouldn't run correctly, so nothing was kept.")
+
             with open(EXTRACT_MARKER, "w", encoding="utf-8") as f:
                 f.write(f"{len(extracted)} files extracted from {os.path.basename(path)}\n")
+                f.write(f"default.xex sha256: {actual_hash}\n")
             self._set_status(f"Extracted {len(extracted)} files successfully.")
         except Exception as e:  # noqa: BLE001 - surface any failure to the user
             self._set_status(f"Extraction failed: {e}")
@@ -487,6 +553,20 @@ class LauncherApp:
 
     def _launch_game(self) -> bool:
         """Start the game as an independent process. Returns True on success."""
+        # Re-check right before launching, not just when the UI last refreshed
+        # - the Play button being enabled reflects state as of the last
+        # refresh, and game_data/ could have been deleted or moved in the
+        # meantime (e.g. the player freed disk space) without the launcher
+        # knowing yet. Better a clear message here than the game crashing
+        # partway through boot with no game data to load.
+        if not _game_data_present():
+            messagebox.showerror(
+                "Game data missing",
+                "The extracted game data is missing or incomplete (was "
+                "BanjoTooie-Data\\game_data deleted or moved?). Click "
+                "“Extract Game Data” again before playing.")
+            self._refresh_state()
+            return False
         exe = find_game_exe()
         if not exe:
             messagebox.showerror("Error", f"{EXE_NAME} not found.")
@@ -566,7 +646,7 @@ class LauncherApp:
         returns."""
         if not self.auto_play.get():
             return False
-        if not os.path.exists(EXTRACT_MARKER) or not find_game_exe():
+        if not _game_data_present() or not find_game_exe():
             return False
         if self._launch_game():
             self.root.destroy()

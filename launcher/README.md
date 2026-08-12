@@ -33,8 +33,13 @@ and the game binaries + their runtime libraries are bundled inside it.
    just **type or paste the file's full path** into the field instead (it's
    editable) and press Enter.
 4. Click **Extract Game Data** (one-time per package; it remembers your
-   package and skips re-extracting next time).
-5. Click **Play**.
+   package and skips re-extracting next time). The launcher checks the
+   extracted `default.xex` against the exact XBLA build this port was tested
+   against and refuses a mismatch (wrong region/revision, or a corrupted
+   file) rather than extracting data the game likely can't run correctly.
+5. Click **Play**. If `game_data/` has gone missing or incomplete since you
+   extracted (e.g. it got deleted to free up space), the launcher catches
+   that here instead of letting the game crash, and asks you to extract again.
 
 **Auto-play:** tick *"Skip this launcher next time (auto-play once extracted)"*
 and, once your data is extracted, future runs launch the game straight away
